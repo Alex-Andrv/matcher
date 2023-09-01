@@ -1,0 +1,26 @@
+[random_coffee_bot]
+token =
+
+[db]
+user =
+password =
+database = randomcoffeedb_students
+host =
+port = 5432
+
+[redis]
+redis_host =
+redis_port = 6379
+redis_dp = 5
+redis_password =
+
+[alarm_bot]
+token =
+chat_id =
+chat_id_with_HR =
+
+[email]
+mail_login =
+mail_password =
+smtp_server =
+smtp_port =

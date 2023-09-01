@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "itmo-coffee-matcher"
+version = "0.1.0"
+description = ""
+authors = ["alexanderandreev <sesh_1.0@niuitmo.ru>"]
+readme = "README.md"
+packages = [{include = "matcher"}]
+
+[tool.poetry.dependencies]
+python = "3.11.5"
+
+asyncpg = "^0.27.0"
+aioredis = "^2.0.1"
+typeguard = "^2.13.3"
+pyscipopt = "4.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
