@@ -9,19 +9,19 @@ from matcher.models.MyUser import MyUser, Sex, Role
 def _get_my_user(user: Record) -> MyUser | None:
     if not user:
         return None
-    check_type('t_user_id', user['t_user_id'], int)
-    check_type('email', user['email'], str)
-    check_type('full_name', user['full_name'], str)
-    check_type('sex', Sex(user['sex']), Sex)
-    check_type('user_name', user['user_name'], str)
+    check_type(user['t_user_id'], int)
+    check_type(user['email'], str)
+    check_type(user['full_name'], str)
+    check_type(Sex(user['sex']), Sex)
+    check_type(user['user_name'], str)
     # check_type('direction', Direction(user['direction']), Direction)
     # check_type('course', Course(user['course']), Course)
-    check_type('user_info', user['user_info'], str)
-    check_type('ban', user['ban'], bool)
-    check_type('is_student', user['is_student'], bool)
-    check_type('is_worker', user['is_worker'], bool)
-    check_type('role', Role(user['role']), Role)
-    check_type('old_user', user['old_user'], bool)
+    check_type(user['user_info'], str)
+    check_type(user['ban'], bool)
+    check_type(user['is_student'], bool)
+    check_type(user['is_worker'], bool)
+    check_type(Role(user['role']), Role)
+    check_type(user['old_user'], bool)
 
     return MyUser(t_user_id=user['t_user_id'],
                   email=user['email'],

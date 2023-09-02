@@ -2,6 +2,7 @@ from pyscipopt.scip import Model
 from typeguard import check_type
 
 from matcher.models.Criterion import Criterion, MeetingFormat
+from matcher.models.MyUser import MyUser
 
 
 class OpbTask:
@@ -12,8 +13,8 @@ class OpbTask:
 
     def _get_var(self, t_user_id1: int, t_user_id2: int):
 
-        check_type('t_user_id1', t_user_id1, int)
-        check_type('t_user_id2', t_user_id2, int)
+        check_type(t_user_id1, int)
+        check_type(t_user_id2, int)
 
         key = f"{t_user_id1}_{t_user_id2}"
         if t_user_id1 > t_user_id2:
@@ -24,18 +25,18 @@ class OpbTask:
 
     def _get_objective_function(self):
         objective = 0
-        t_user_ids = self.users.keys()
+        t_user_ids = list(self.users.keys())
         for i in range(len(t_user_ids)):
             for j in range(i + 1, len(t_user_ids)):
                 var = self._get_var(t_user_ids[i], t_user_ids[j])
                 criterion_user_1: Criterion = self.users[t_user_ids[i]]["criterion"]
                 criterion_user_2: Criterion = self.users[t_user_ids[j]]["criterion"]
-                coeff = len(set(criterion_user_1.interests) & set(criterion_user_2.interests))
+                coeff = len(set(criterion_user_1.interests) & set(criterion_user_2.interests)) + 1
                 objective -= coeff * var
         return objective
 
     def _only_one_companion_constraints(self):
-        t_user_ids = self.users.keys()
+        t_user_ids = list(self.users.keys())
         constraints = []
         for i in range(len(t_user_ids)):
             constraint = 0
@@ -56,7 +57,7 @@ class OpbTask:
 
     def _forbid_not_intersection_place_constraints(self):
         constraints = []
-        t_user_ids = self.users.keys()
+        t_user_ids = list(self.users.keys())
         for i in range(len(t_user_ids)):
             for j in range(i + 1, len(t_user_ids)):
                 var = self._get_var(t_user_ids[i], t_user_ids[j])
@@ -71,11 +72,25 @@ class OpbTask:
                     constraints.append(var <= 0)
 
                 if criterion_user_1.meeting_format != MeetingFormat.ONLINE and \
-                    criterion_user_2.meeting_format != MeetingFormat.ONLINE:
+                    criterion_user_2.meeting_format != MeetingFormat.ONLINE and \
+                        not (criterion_user_1.meeting_format == MeetingFormat.ANY and
+                             criterion_user_2.meeting_format == MeetingFormat.ANY):
                     if len(set(criterion_user_1.preferred_places).
                                    intersection(set(criterion_user_2.preferred_places))) == 0:
                         constraints.append(var <= 0)
 
+        return constraints
+
+    def _forbid_not_different_role_constraints(self):
+        constraints = []
+        t_user_ids = list(self.users.keys())
+        for i in range(len(t_user_ids)):
+            for j in range(i + 1, len(t_user_ids)):
+                var = self._get_var(t_user_ids[i], t_user_ids[j])
+                user1: MyUser = self.users[t_user_ids[i]]["user"]
+                user2: MyUser = self.users[t_user_ids[j]]["user"]
+                if user1.role != user2.role:
+                    constraints.append(var <= 0)
         return constraints
 
     def _generate_task(self):
@@ -83,10 +98,11 @@ class OpbTask:
         [self.model.addCons(constraint) for constraint in self._only_one_companion_constraints()]
         [self.model.addCons(constraint) for constraint in self._forbid_homies_constraints()]
         [self.model.addCons(constraint) for constraint in self._forbid_not_intersection_place_constraints()]
+        [self.model.addCons(constraint) for constraint in self._forbid_not_different_role_constraints()]
 
     def _get_matching(self, solution):
         matching = []
-        t_user_ids = self.users.keys()
+        t_user_ids = list(self.users.keys())
         used = set()
         for i in range(len(t_user_ids)):
             for j in range(i + 1, len(t_user_ids)):
@@ -97,7 +113,7 @@ class OpbTask:
                     assert t_user_ids[j] not in used, "t_user_ids[j] already in used"
                     used.add(t_user_ids[i])
                     used.add(t_user_ids[j])
-        free_users = list(set(t_user_ids).intersection(used))
+        free_users = list(set(t_user_ids).difference(used))
         return free_users, matching
 
 
@@ -106,8 +122,3 @@ class OpbTask:
         self._generate_task()
         self.model.optimize()
         return self._get_matching(self.model.getBestSol())
-
-
-
-
-

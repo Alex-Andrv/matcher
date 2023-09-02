@@ -1,8 +1,8 @@
 from asyncpg import Connection, Record
 from typeguard import check_type
 
-from app.tgbot.models.IsuData import IsuData
-from app.tgbot.models.MyUser import Sex
+from matcher.models.IsuData import IsuData
+from matcher.models.MyUser import Sex
 
 
 def _get_my_isudata(isudata: Record) -> IsuData | None:

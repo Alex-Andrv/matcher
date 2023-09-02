@@ -54,7 +54,7 @@ async def get_next_matching_date():
 
 
 async def get_homies(connection):
-    rows = connection.fetch(
+    rows = await connection.fetch(
         "SELECT meetings.t_user_id as t_user_id FROM feedbacks LEFT JOIN meetings on feedbacks.meeting_id=meetings.id WHERE is_meeting_took_place = true")
     return [row['t_user_id'] for row in rows]
 

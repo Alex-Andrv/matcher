@@ -16,6 +16,6 @@ class NextMatchingRepo:
             'SELECT next_matching FROM start_next_matching_algo'))
 
     async def update_next_matching(self, new_next_matching: datetime):
-        return await self.conn.execute('UPDATE next_matching SET next_matching=$1', new_next_matching)
+        return await self.conn.execute('UPDATE start_next_matching_algo SET next_matching=$1', new_next_matching)
 
 

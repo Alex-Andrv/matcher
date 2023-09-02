@@ -2,7 +2,7 @@ from typing import List
 
 from asyncpg import Connection
 
-from app.tgbot.models.Feedback import Feedback
+from matcher.models.Feedback import Feedback
 
 
 def _get_feedback(feedback):

@@ -46,5 +46,5 @@ class WaitingCompanionRepo:
     async def get_all_users_in_queue_less_time(self, next_matching: datetime):
         return _get_list_users(await self.conn.fetch(
             """
-            SELECT t_user_id FROM waiting_companions WHERE time <= $1
+            SELECT t_user_id FROM waiting_companions WHERE matching_time <= $1
             """, next_matching))
