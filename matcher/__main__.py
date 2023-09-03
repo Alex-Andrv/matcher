@@ -119,6 +119,7 @@ async def apologize_for_mismatching(free_users: List[int], new_next_matching):
             async with conn.transaction():
                 await WaitingCompanionRepo(conn).upsert_user_in_queue(free_user, new_next_matching)
                 message = await bot.send_message(free_user, message, reply_markup=cancel_queue_buttons)
+                await asyncio.sleep(5)
                 await delete_and_change_state_message(bot, message, free_user, "ReadyStates:add_to_queue")
         except Exception as e:
             await logger.print_error(f"apologize_for_mismatching: error with user {free_user}: {str(e)}")
@@ -180,6 +181,7 @@ async def ping_user_and_delete(bot, user, users2_dict):
         async with conn.transaction():
             await WaitingCompanionRepo(conn).delete_user_from_queue(user)
             message = await ping_user(bot, user, users2_dict)
+            await asyncio.sleep(5)
             await delete_and_change_state_message(bot, message, user, "ApproveStates:approve")
     except Exception as e:
         await logger.print_error(f"sent_matching_result: error with user {user}: {str(e)}")
