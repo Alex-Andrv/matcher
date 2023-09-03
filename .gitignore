@@ -1,2 +1,4 @@
 .idea/*
 
+/matcher/configs/bot.ini
+/matcher/configs/bot_docker.ini

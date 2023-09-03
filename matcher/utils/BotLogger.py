@@ -52,6 +52,20 @@ class BotLogger(logging.LoggerAdapter):
         message = message + " " + (await self._get_current_user_info())
         print(f'\033[0;36m[DEV]: {message} \033[0;0m')
 
+    async def send_matching_info(self, cnt_students, cnt_workers, cnt_students_matching, cnt_workers_matching,
+                                 cnt_free_students, cnt_free_workers):
+        await self.alarm_bot.send_message(CHAT_ID_ALARM_WITH_HR,
+                                          f"""
+                Поздравляем! Матчинг завершился успешно! 
+                Общее количество студентов в очереди составило: {cnt_students}. 
+                Из них не удалось сматчить следующее количество людей: {cnt_free_students}, 
+                однако успешно найдены пары для данного числа участников: {cnt_students_matching}. 
+                
+                Общее количество сотрудников в очереди составило: {cnt_workers}. 
+                Из них не удалось сматчить следующее количество людей: {cnt_free_workers}, 
+                однако успешно найдены пары для данного числа участников: {cnt_workers_matching}. 
+                """)
+
     async def send_suggestion(self, text):
         user: User = User.get_current()
         user_name: str = user.username

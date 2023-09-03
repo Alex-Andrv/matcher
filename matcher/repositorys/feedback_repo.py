@@ -29,7 +29,7 @@ class FeedbackRepo:
         return await self.conn.execute(
             """
             INSERT INTO feedbacks 
-                (t_user_id, waiting_id,
+                (t_user_id, meeting_id,
                  is_meeting_took_place, 
                  rating, cancellation_reason) 
             VALUES ($1,$2,$3,$4,$5)

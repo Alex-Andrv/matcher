@@ -26,17 +26,16 @@ class MyMessage:
         }
 
     @staticmethod
-    @typechecked
-    def from_dict(message: dict | None) -> Self | None:
+    def from_dict(message: dict | None) ->  Self | None:
         if not message:
             return None
 
-        check_type('message_id', message['message_id'], int)
-        check_type('chat_id', message['chat_id'], int)
-        check_type('with_reply_markup', message['with_reply_markup'], bool)
-        check_type('text', message['text'], str)
-        check_type('reply_markup', message['reply_markup'], typing.Dict[str, typing.Any] | None)
-        check_type('parse_mode', message['parse_mode'], Literal["HTML"])
+        check_type(message['message_id'], int)
+        check_type(message['chat_id'], int)
+        check_type(message['with_reply_markup'], bool)
+        check_type(message['text'], str)
+        check_type(message['reply_markup'], typing.Dict[str, typing.Any] | None)
+        check_type(message['parse_mode'], Literal["HTML"])
 
         message_id: int = typing.cast(int, message['message_id'])
         chat_id: int = typing.cast(int, message['chat_id'])

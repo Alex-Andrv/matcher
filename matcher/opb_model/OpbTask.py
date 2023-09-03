@@ -1,8 +1,12 @@
+from typing import List
+
 from pyscipopt.scip import Model
 from typeguard import check_type
 
 from matcher.models.Criterion import Criterion, MeetingFormat
+from matcher.models.Group import Group
 from matcher.models.MyUser import MyUser
+from matcher.models.WorkPlace import WorkPlace
 
 
 class OpbTask:
@@ -93,12 +97,38 @@ class OpbTask:
                     constraints.append(var <= 0)
         return constraints
 
+    def _is_cross_groups(self, groups_user1: List[Group], groups_user2: List[Group]):
+        set_groups_user1 = set(map(lambda group_user1: group_user1.name, groups_user1))
+        set_groups_user2 = set(map(lambda group_user2: group_user2.name, groups_user2))
+        return len(set_groups_user1 & set_groups_user2) != 0
+
+    def _is_cross_works(self, works_user1: List[WorkPlace], works_user2: List[WorkPlace]):
+        set_works_user1 = set(map(lambda work_user1: work_user1.name, works_user1))
+        set_works_user2 = set(map(lambda work_user2: work_user2.name, works_user2))
+        return len(set_works_user1 & set_works_user2) != 0
+
+    def _forbid_same_group_or_departament_constraints(self):
+        constraints = []
+        t_user_ids = list(self.users.keys())
+        for i in range(len(t_user_ids)):
+            for j in range(i + 1, len(t_user_ids)):
+                var = self._get_var(t_user_ids[i], t_user_ids[j])
+                groups_user1: List[Group] = self.users[t_user_ids[i]]["groups"]
+                groups_user2: List[Group] = self.users[t_user_ids[j]]["groups"]
+                works_user1: List[WorkPlace] = self.users[t_user_ids[i]]["works"]
+                works_user2: List[WorkPlace] = self.users[t_user_ids[j]]["works"]
+                if self._is_cross_groups(groups_user1, groups_user2) or self._is_cross_works(works_user1, works_user2):
+                    constraints.append(var <= 0)
+
+        return constraints
+
     def _generate_task(self):
         self.model.setObjective(self._get_objective_function())
         [self.model.addCons(constraint) for constraint in self._only_one_companion_constraints()]
         [self.model.addCons(constraint) for constraint in self._forbid_homies_constraints()]
         [self.model.addCons(constraint) for constraint in self._forbid_not_intersection_place_constraints()]
         [self.model.addCons(constraint) for constraint in self._forbid_not_different_role_constraints()]
+        [self.model.addCons(constraint) for constraint in self._forbid_same_group_or_departament_constraints()]
 
     def _get_matching(self, solution):
         matching = []

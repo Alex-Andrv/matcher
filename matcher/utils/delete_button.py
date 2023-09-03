@@ -15,7 +15,7 @@ logging_decorator = logging_decorator_factory(logger)
 async def delete_button_on_previous_message(bot: Bot, state_data: dict):
     previous_message: MyMessage = MyMessage.from_dict(state_data.get('previous_message', None))
     if previous_message is not None:
-        check_type('previous_message', previous_message, MyMessage)
+        check_type(previous_message, MyMessage)
         previous_message_id: int = previous_message.message_id
         chat_id: int = previous_message.chat_id
         with_reply_markup: bool = previous_message.with_reply_markup
