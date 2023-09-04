@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - pip=23.2.1
   - aioredis=2.0.1
   - asyncpg=0.28.0
   - pyscipopt=4.3.0

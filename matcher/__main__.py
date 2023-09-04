@@ -113,7 +113,7 @@ async def apologize_for_mismatching(free_users: List[int], new_next_matching):
     for free_user in free_users:
         bot = Bot(token=BOT_TOKEN)
         message = "К сожалению, на этот раз не получилось найти подходящего собеседника. 😔 Но не переживай! Следующий матчинг будет во {matching_date}, и мы надеемся, что он будет успешный! 🤝😊"
-        message.format(matching_date=timestamp_to_week_day(new_next_matching))
+        message = message.format(matching_date=timestamp_to_week_day(new_next_matching))
         conn = await get_postgres_connection()
         try:
             async with conn.transaction():

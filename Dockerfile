@@ -2,6 +2,14 @@ FROM continuumio/miniconda3
 
 COPY environment.yml /tmp/environment.yml
 
+RUN pip install --upgrade pip
+
+RUN conda clean -all
+RUN conda clean --index-cache
+RUN conda update conda
+
+RUN conda install -c conda-forge pyscipopt
+
 RUN conda env create -f /tmp/environment.yml && \
     conda clean -afy && \
     rm /tmp/environment.yml
