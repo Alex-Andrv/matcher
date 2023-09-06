@@ -107,18 +107,18 @@ async def delete_and_change_state_message(bot, message, free_user, new_state: st
     redis_conn.close()
 
 async def apologize_for_mismatching(free_users: List[int], new_next_matching):
-    cancel_queue_buttons = InlineKeyboardMarkup()
-    cancel_queue_buttons.add(InlineKeyboardButton(text="Покинуть очередь", callback_data='cancel_queue'))
+    edit_profile_buttons = InlineKeyboardMarkup()
+    edit_profile_buttons.add(InlineKeyboardButton(text="Редактировать профиль", callback_data='edit_profile'))
 
     for free_user in free_users:
         bot = Bot(token=BOT_TOKEN)
-        message = "К сожалению, на этот раз не получилось найти подходящего собеседника. 😔 Но не переживай! Следующий матчинг будет во {matching_date}, и мы надеемся, что он будет успешный! 🤝😊"
-        message = message.format(matching_date=timestamp_to_week_day(new_next_matching))
+        message = "К сожалению, на этот раз не получилось найти подходящего собеседника. 😔 Но не переживай! Следующий матчинг будет: {matching_date}"
+        message = message.format(matching_date=new_next_matching.strftime("%Y-%m-%d"))
         conn = await get_postgres_connection()
         try:
             async with conn.transaction():
                 await WaitingCompanionRepo(conn).upsert_user_in_queue(free_user, new_next_matching)
-                message = await bot.send_message(free_user, message, reply_markup=cancel_queue_buttons)
+                message = await bot.send_message(free_user, message, reply_markup=edit_profile_buttons)
                 await asyncio.sleep(5)
                 await delete_and_change_state_message(bot, message, free_user, "ReadyStates:add_to_queue")
         except Exception as e:
