@@ -4,7 +4,7 @@ print(os.getcwd())
 
 VERSION = '0.0.1'
 
-BOT_INI_PATH = './matcher/configs/bot_docker.ini'
+BOT_INI_PATH = './matcher/configs/bot.ini'
 
 config = configparser.ConfigParser()
 config.read(BOT_INI_PATH)
